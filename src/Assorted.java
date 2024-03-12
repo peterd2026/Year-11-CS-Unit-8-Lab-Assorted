@@ -203,18 +203,36 @@ public class Assorted {
     }
 
     private static boolean hasUniqueProperty(int num) {
-        int sumOfPowers = 0;
-        int originalNum = num;
-        int numDigits = (int) Math.log10(num) + 1;
+        int sum = 0;
+        int temp = num;
 
-        while (num > 0) {
-            int digit = num % 10;
-            sumOfPowers += Math.pow(digit, numDigits);
-            num /= 10;
+        while (temp != 0) {
+            int digit = temp % 10;
+            int power = countDigits(temp);
+            sum += Math.pow(digit, power);
+            temp /= 10;
         }
 
-        return sumOfPowers == originalNum;
+        return num == sum;
     }
+
+    private static int countDigits(int num) {
+        int count = 0;
+        while (num != 0) {
+            num /= 10;
+            count++;
+        }
+        return count;
+    }
+
+    public static void main(String[] args) {
+        List<Integer> numbers = uniqueNumber(1, 10);
+        System.out.println(numbers);
+
+        numbers = uniqueNumber(1, 100);
+        System.out.println(numbers);
+    }
+
     /**
      * Challenge 9
      *
@@ -236,18 +254,29 @@ public class Assorted {
      */
     public static List<Integer> filterNTimes(List<Integer> list, int n) {
         List<Integer> result = new ArrayList<>();
-        List<Integer> countList = new ArrayList<>();
 
-        for (int num : list) {
-            int count = countList.stream().filter(x -> x.equals(num)).reduce(0, Integer::sum);
-            if (count < n) {
-                result.add(num);
-                countList.add(num);
+        for (int i = 0; i < list.size(); i++) {
+            int motif = list.get(i);
+            int count = countOccurrences(list, motif, i);
+            if (count <= n) {
+                result.add(motif);
             }
         }
 
         return result;
     }
+
+    private static int countOccurrences(List<Integer> list, int motif, int endIndex) {
+        int count = 0;
+        for (int i = 0; i <= endIndex; i++) {
+            if (list.get(i) == motif) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+
     /**
      *
      * Challenge 10
